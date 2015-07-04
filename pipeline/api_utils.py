@@ -40,7 +40,7 @@ class TokensAPI( object ):
 		with open( filename, 'r' ) as f:
 			lines = UnicodeReader( f )
 			for ( docID, docTokens ) in lines:
-				self.data[ docID ] = docTokens.split( ' ' )
+				self.data[ docID ] = docTokens.split( ' ' ) # multi-word tokens not possible due to file format
 	
 	def write( self ):
 		CheckAndMakeDirs( self.path )
