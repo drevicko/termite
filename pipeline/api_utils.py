@@ -40,8 +40,10 @@ class TokensAPI( object ):
 		filename = self.path + TokensAPI.TOKENS
 		with open( filename, 'r' ) as f:
 			lines = UnicodeReader( f )
-			for ( docID, docTokens ) in lines:
-				self.data[ docID ] = docTokens.split( ' ' )
+			for line in lines:
+				docID = line[0]
+				docTokens = line[1:]
+				self.data[ docID ] = docTokens
 	
 	def write( self ):
 		CheckAndMakeDirs( self.path )
@@ -49,7 +51,7 @@ class TokensAPI( object ):
 		with open( filename, 'w' ) as f:
 			writer = UnicodeWriter( f )
 			for ( docID, docTokens ) in self.data.iteritems():
-				writer.writerow( [ docID, ' '.join(docTokens) ] )
+				writer.writerow( [ docID ] + docTokens )
 
 class ModelAPI( object ):
 	SUBFOLDER = 'model'
