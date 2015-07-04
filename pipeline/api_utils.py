@@ -3,6 +3,7 @@
 
 import re
 import json
+import os
 from io_utils import CheckAndMakeDirs
 from io_utils import ReadAsList, ReadAsVector, ReadAsMatrix, ReadAsSparseVector, ReadAsSparseMatrix, ReadAsJson
 from io_utils import WriteAsList, WriteAsVector, WriteAsMatrix, WriteAsSparseVector, WriteAsSparseMatrix, WriteAsJson, WriteAsTabDelimited
@@ -31,7 +32,7 @@ class TokensAPI( object ):
 	TOKENS = 'tokens.txt'
 	
 	def __init__( self, path ):
-		self.path = '{}/{}/'.format( path, TokensAPI.SUBFOLDER )
+		self.path = os.path.join( path, TokensAPI.SUBFOLDER, '' )
 		self.data = {}
 	
 	def read( self ):
@@ -57,17 +58,23 @@ class ModelAPI( object ):
 	TERM_TOPIC_MATRIX = 'term-topic-matrix.txt'
 	
 	def __init__( self, path ):
-		self.path = '{}/{}/'.format( path, ModelAPI.SUBFOLDER )
+		self.path = os.path.join( path, ModelAPI.SUBFOLDER, '' )
 		self.topic_index = []
 		self.term_index = []
 		self.topic_count = 0
 		self.term_count = 0
 		self.term_topic_matrix = []
 	
-	def read( self ):
+	def read( self, delimiter=None ):
+		'''Read topic index, term index (lists of topi/term names) and 
+		term-topic matrix (csv of term-topic counts, one row per term, 
+		default delimeter <tab> from utf8_utils.UnicodeReader)'''
 		self.topic_index = ReadAsList( self.path + ModelAPI.TOPIC_INDEX )
 		self.term_index = ReadAsList( self.path + ModelAPI.TERM_INDEX )
-		self.term_topic_matrix = ReadAsMatrix( self.path + ModelAPI.TERM_TOPIC_MATRIX )
+		if delimiter:
+			self.term_topic_matrix = ReadAsMatrix( self.path + ModelAPI.TERM_TOPIC_MATRIX, delimiter )
+		else:
+			self.term_topic_matrix = ReadAsMatrix( self.path + ModelAPI.TERM_TOPIC_MATRIX )
 		self.verify()
 	
 	def verify( self ):
@@ -95,7 +102,7 @@ class SaliencyAPI( object ):
 	TERM_SALIENCY_FIELDS = [ 'topic', 'weight' ]
 	
 	def __init__( self, path ):
-		self.path = '{}/{}/'.format( path, SaliencyAPI.SUBFOLDER )
+		self.path = os.path.join( path, SaliencyAPI.SUBFOLDER, '' )
 		self.term_info = {}
 		self.topic_info = {}
 	
@@ -124,7 +131,7 @@ class SimilarityAPI( object ):
 	COMBINED_G2 = 'combined-g2.txt'
 	
 	def __init__( self, path ):
-		self.path = '{}/{}/'.format( path, SimilarityAPI.SUBFOLDER )
+		self.path = os.path.join( path, SimilarityAPI.SUBFOLDER, '' )
 		self.document_occurrence = {}
 		self.document_cooccurrence = {}
 		self.window_occurrence = {}
@@ -167,7 +174,7 @@ class SeriationAPI( object ):
 	TERM_ITER_INDEX = 'term-iter-index.txt'
 	
 	def __init__( self, path ):
-		self.path = '{}/{}/'.format( path, SeriationAPI.SUBFOLDER )
+		self.path = os.path.join( path, SeriationAPI.SUBFOLDER, '' )
 		self.term_ordering = []
 		self.term_iter_index = []
 	
@@ -187,7 +194,7 @@ class ClientAPI( object ):
 	GLOBAL_TERM_FREQS = 'global-term-freqs.json'
 	
 	def __init__( self, path ):
-		self.path = '{}/{}/'.format( path, ClientAPI.SUBFOLDER )
+		self.path = os.path.join( path, ClientAPI.SUBFOLDER, '' )
 		self.seriated_parameters = {}
 		self.filtered_parameters = {}
 		self.global_term_freqs = {}

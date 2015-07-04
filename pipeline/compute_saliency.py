@@ -41,7 +41,7 @@ class ComputeSaliency( object ):
 		handler.setLevel( logging_level )
 		self.logger.addHandler( handler )
 	
-	def execute( self, data_path ):
+	def execute( self, data_path, model=None ):
 		
 		assert data_path is not None
 		
@@ -50,11 +50,15 @@ class ComputeSaliency( object ):
 		self.logger.info( '    data_path = %s', data_path                                                    )
 		
 		self.logger.info( 'Connecting to data...' )
-		self.model = ModelAPI( data_path )
 		self.saliency = SaliencyAPI( data_path )
-		
-		self.logger.info( 'Reading data from disk...' )
-		self.model.read()
+		if model:
+			print "using provided model"
+			assert type(model) is ModelAPI
+			self.model = model
+		else:
+			self.model = ModelAPI( data_path )
+			self.logger.info( 'Reading data from disk...' )
+			self.model.read()
 		
 		self.logger.info( 'Computing...' )
 		self.computeTopicInfo()
@@ -85,6 +89,7 @@ class ComputeSaliency( object ):
 		for i in range(self.model.term_count):
 			term = self.model.term_index[i]
 			counts = self.model.term_topic_matrix[i]
+			# so term_topic_matrix is word,topic; term file is tab delimeted csv
 			frequency = sum( counts )
 			probs = self.getNormalized( counts )
 			distinctiveness = self.getKLDivergence( probs, topic_marginal )

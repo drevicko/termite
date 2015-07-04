@@ -28,7 +28,7 @@ class ComputeSimilarity( object ):
 		handler.setLevel( logging_level )
 		self.logger.addHandler( handler )
 	
-	def execute( self, data_path, sliding_window_size = None ):
+	def execute( self, data_path, sliding_window_size = None, tokens = None ):
 		
 		assert data_path is not None
 		if sliding_window_size is None:
@@ -40,8 +40,13 @@ class ComputeSimilarity( object ):
 		self.logger.info( '    sliding_window_size = %d', sliding_window_size                                )
 		
 		self.logger.info( 'Connecting to data...' )
-		self.tokens = TokensAPI( data_path )
 		self.similarity = SimilarityAPI( data_path )
+
+		if tokens:
+			assert type(tokens) is TokensAPI
+			self.tokens = tokens
+		else:
+			self.tokens = TokensAPI( data_path )
 		
 		self.logger.info( 'Reading data from disk...' )
 		self.tokens.read()

@@ -29,10 +29,15 @@ def ReadAsVector( filename ):
 			vector.append( float( line ) )
 	return vector
 
-def ReadAsMatrix( filename ):
+def ReadAsMatrix( filename, delimiter=None ):
+	'''Read a 2-d list from a csv file.
+	The default delimeter is <tab> (from utf8_utils.UnicodeReader)'''
 	matrix = []
 	with open( filename, 'r' ) as f:
-		lines = UnicodeReader( f )
+		if delimiter:
+			lines = UnicodeReader( f, delimiter=delimiter )
+		else:
+			lines = UnicodeReader( f )
 		for line in lines:
 			matrix.append( map( float, line ) )
 	return matrix
